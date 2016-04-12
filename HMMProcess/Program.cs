@@ -11,17 +11,17 @@ namespace HMMProcess
     {
         static void Main(string[] args)
         {
-            string ResultdirectoryPath = @"D:\\201512_CMProcess\\HMMResult_Version3";
+            string ResultdirectoryPath = @"D:\\201512_CMProcess\\HMMResult\\Version4";
 
-            string directoryPath_HWInfo = @"D:/201512_CMProcess/CMDProcessResult/HWInfoResult_0.5/";//定义一个路径变量
-            string directoryPath_STInfo = @"D:/201512_CMProcess/CMDProcessResult/STDataResult_400_1Hour/";//定义一个路径变量
+            string directoryPath_HWInfo = @"D:/201512_CMProcess/CMDProcessResult/version2/HWInfoResult_0.5/";//定义一个路径变量
+            string directoryPath_STInfo = @"D:/201512_CMProcess/CMDProcessResult/version2/STDataResult_400_1Hour/";//定义一个路径变量
 
             if (!Directory.Exists(ResultdirectoryPath))//如果路径不存在
             {
                 Directory.CreateDirectory(ResultdirectoryPath);//创建一个路径的文件夹
             }
 
-            StreamWriter swlog = new StreamWriter(ResultdirectoryPath + "log.txt");
+            StreamWriter swlog = new StreamWriter(Path.Combine(ResultdirectoryPath, "log.txt"), true);
 
             Dictionary<int,List<int>> userhwinfo;
 
@@ -46,7 +46,7 @@ namespace HMMProcess
             StationInfo = input.StationIdInfoInput();
 
             //分163个文件读
-            DirectoryInfo dir = new System.IO.DirectoryInfo("D:\\201512_CMProcess\\CMDProcessResult\\STDataResult_400_1Hour");
+            DirectoryInfo dir = new System.IO.DirectoryInfo("D:\\201512_CMProcess\\CMDProcessResult\\version2\\STDataResult_400_1Hour");
             
            // int n = 0;
             for(int n=0;n< dir.GetFiles().Count();n++)

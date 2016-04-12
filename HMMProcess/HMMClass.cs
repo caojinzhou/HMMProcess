@@ -89,7 +89,6 @@ namespace HMMProcess
             PSI = new Int32[OB.Length, N];      // 反向指针
 
 
-
             bool isPreHPoint = false;
             bool isPreWPoint = false;
             //初始概率矩阵为四段时间制
@@ -116,7 +115,7 @@ namespace HMMProcess
             // 2. 递归  
             for (Int32 t = 1; t < OB.Length; t++)
             {
-                //获取时间索引（这里可采用3段制和24段制）,采用4段制。
+                //获取时间索引（这里可采用4段制和24段制）,采用4段制。0-6，6-12，12-18，18-24
                 int CHourIndex = (OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) > 24 ? (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour - 24) / 12 : (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) / 12;
                 int PHourIndex = (OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour) > 24 ? (int)(OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour - 24) / 12 : (int)(OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour) / 12;
 
@@ -142,17 +141,17 @@ namespace HMMProcess
                     }
                     else if(isPreHPoint==true&&isPreWPoint==true)
                     {
-
-                        Double MaxValueH = DELTA[t - 1, 5] * A[PHourIndex + 5 * 4, CHourIndex + j * 4];
-                        Double MaxValueW = DELTA[t - 1, 3] * A[PHourIndex + 3 * 4, CHourIndex + j * 4];
-                        if(MaxValueH>MaxValueW)
+                        //看上一个点的所处时刻，决定是home还是work
+                        if(PHourIndex==0||PHourIndex==3)
                         {
+                            Double MaxValueH = DELTA[t - 1, 5] * A[PHourIndex + 5 * 4, CHourIndex + j * 4];
                             Int32 MaxValueIndex = 5;
                             DELTA[t, j] = MaxValueH * B[OB[t].stationid][j];
                             PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                         }
-                        else
+                        else if(PHourIndex==1||PHourIndex==2)
                         {
+                            Double MaxValueW = DELTA[t - 1, 3] * A[PHourIndex + 3 * 4, CHourIndex + j * 4];
                             Int32 MaxValueIndex = 3;
                             DELTA[t, j] = MaxValueW * B[OB[t].stationid][j];
                             PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
@@ -183,7 +182,7 @@ namespace HMMProcess
                 //先置为false
                 isPreWPoint = false;
                 isPreHPoint = false;
-                //如果当前时刻为工作或者家的时候，要重新计算概率，并将bool判断置为true
+                
                //当前位置为工作或者家的时候，要保证下一个点的前溯最优点为这个点，否则会出现错误
                //有工作点
                if (HWinfo[1] == OB[t].stationid)
@@ -203,19 +202,48 @@ namespace HMMProcess
 
 
             // 3. 终止  
-
+            //终止条件适用于输入轨迹为1个点、2个点、多个点。
             //找到最大 的概率路径，即DELTA[OB.Length - 1, i]中最大的值
             Int32[] Q = new Int32[OB.Length];   // 最佳路径
             Q[OB.Length - 1] = 0;
             Probability = DELTA[OB.Length - 1, 0];
-            for (Int32 i = 1; i < N; i++)
+            //添加终止条件。
+            if (isPreHPoint == true && isPreWPoint == false)
             {
-                if (DELTA[OB.Length - 1, i] > Probability)
+                Probability = DELTA[OB.Length - 1, 5];
+                Q[OB.Length - 1] = 5;
+            }
+            else if (isPreWPoint == true && isPreHPoint == false)
+            {
+                Probability = DELTA[OB.Length - 1, 3];
+                Q[OB.Length - 1] = 3;
+            }
+            else if (isPreHPoint == true && isPreWPoint == true)
+            {
+                int PHourIndex = (OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour) > 24 ? (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour - 24) / 12 : (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour) / 12;
+                if (PHourIndex == 0 || PHourIndex == 3)
                 {
-                    Probability = DELTA[OB.Length - 1, i];
-                    Q[OB.Length - 1] = i;
+                    Probability = DELTA[OB.Length - 1, 5];
+                    Q[OB.Length - 1] = 5;
+                }
+                else if (PHourIndex == 1 || PHourIndex == 2)
+                {
+                    Probability = DELTA[OB.Length - 1, 3];
+                    Q[OB.Length - 1] = 3;
                 }
             }
+            else
+            {
+                for (Int32 i = 1; i < N; i++)
+                {
+                    if (DELTA[OB.Length - 1, i] > Probability)
+                    {
+                        Probability = DELTA[OB.Length - 1, i];
+                        Q[OB.Length - 1] = i;
+                    }
+                }
+            }
+
 
             // 4. 路径回溯  
             for (Int32 t = OB.Length - 2; t >= 0; t--)
