@@ -97,18 +97,18 @@ namespace HMMProcess
             for (Int32 j = 0; j < N; j++)
             {
                 //OB[0].towerindex是2841基站序列
-                DELTA[0, j] = PI[j, InitHourIndex] * B[OB[0].stationid][j];
+                DELTA[0, j] = PI[j, InitHourIndex] * B[OB[0].cellid][j];
             }
             //初始为家
-            if (HWinfo[0] == OB[0].stationid)
+            if (HWinfo[0] == OB[0].cellid)
             {
-                DELTA[0, 5] = PI[5, InitHourIndex]* B[OB[0].stationid][5];
+                DELTA[0, 5] = PI[5, InitHourIndex]* B[OB[0].cellid][5];
                 isPreHPoint = true;
             }
             //初始为工作
-            if (HWinfo[1] == OB[0].stationid)
+            if (HWinfo[1] == OB[0].cellid)
             {
-                DELTA[0, 3] = PI[3, InitHourIndex]* B[OB[0].stationid][3];
+                DELTA[0, 3] = PI[3, InitHourIndex]* B[OB[0].cellid][3];
                 isPreWPoint = true;
             }
 
@@ -128,7 +128,7 @@ namespace HMMProcess
                         Double MaxValue = DELTA[t - 1, 5] * A[PHourIndex+5*4, CHourIndex + j * 4];
                         Int32 MaxValueIndex = 5;
 
-                        DELTA[t, j] = MaxValue * B[OB[t].stationid][j];
+                        DELTA[t, j] = MaxValue * B[OB[t].cellid][j];
                         PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                     }
                     else if (isPreWPoint == true&&isPreHPoint==false)
@@ -136,7 +136,7 @@ namespace HMMProcess
                         Double MaxValue = DELTA[t - 1, 3] * A[PHourIndex+3*4, CHourIndex + j * 4];
                         Int32 MaxValueIndex = 3;
 
-                        DELTA[t, j] = MaxValue * B[OB[t].stationid][j];
+                        DELTA[t, j] = MaxValue * B[OB[t].cellid][j];
                         PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                     }
                     else if(isPreHPoint==true&&isPreWPoint==true)
@@ -146,14 +146,14 @@ namespace HMMProcess
                         {
                             Double MaxValueH = DELTA[t - 1, 5] * A[PHourIndex + 5 * 4, CHourIndex + j * 4];
                             Int32 MaxValueIndex = 5;
-                            DELTA[t, j] = MaxValueH * B[OB[t].stationid][j];
+                            DELTA[t, j] = MaxValueH * B[OB[t].cellid][j];
                             PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                         }
                         else if(PHourIndex==1||PHourIndex==2)
                         {
                             Double MaxValueW = DELTA[t - 1, 3] * A[PHourIndex + 3 * 4, CHourIndex + j * 4];
                             Int32 MaxValueIndex = 3;
-                            DELTA[t, j] = MaxValueW * B[OB[t].stationid][j];
+                            DELTA[t, j] = MaxValueW * B[OB[t].cellid][j];
                             PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                         }
                     }
@@ -173,7 +173,7 @@ namespace HMMProcess
                             }
 
                         }
-                        DELTA[t, j] = MaxValue * B[OB[t].stationid][j];
+                        DELTA[t, j] = MaxValue * B[OB[t].cellid][j];
                         PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态  
 
                     }
@@ -185,14 +185,14 @@ namespace HMMProcess
                 
                //当前位置为工作或者家的时候，要保证下一个点的前溯最优点为这个点，否则会出现错误
                //有工作点
-               if (HWinfo[1] == OB[t].stationid)
+               if (HWinfo[1] == OB[t].cellid)
                {
                    isPreWPoint = true;
                    //Double MaxValue = DELTA[t - 1, ] * A[PHourIndex, CHourIndex + 3 * 3];
                    //DELTA[t, 3] = DELTA[t, 3] / B[OB[t].stationid][3];
 
                }
-               else if (HWinfo[0] == OB[t].stationid)
+               else if (HWinfo[0] == OB[t].cellid)
                {
                     isPreHPoint = true;
                     //Double MaxValue = DELTA[t - 1, PSI[t-1,5]] * A[PHourIndex, CHourIndex + 5 * 3];
@@ -267,7 +267,7 @@ namespace HMMProcess
             // 1. 初始化  
             for (Int32 j = 0; j < N; j++)
             {
-                DELTA[0, j] = PI[j,InitHourIndex] * B[OB[0].stationid][j];
+                DELTA[0, j] = PI[j,InitHourIndex] * B[OB[0].cellid][j];
             }
 
             // 2. 递归  
@@ -294,7 +294,7 @@ namespace HMMProcess
 
                     }
 
-                    DELTA[t, j] = MaxValue * B[OB[t].stationid][j];
+                    DELTA[t, j] = MaxValue * B[OB[t].cellid][j];
                     PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态  
                 }
             }

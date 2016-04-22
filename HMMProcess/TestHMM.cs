@@ -13,8 +13,8 @@ namespace   HMMProcess
         StreamWriter sw;
 
         enum Activity { Shopping, Eating, Transportation, work, Social, home, study, Recreation,Entertainment };  // 隐藏状态（活动）,9类
-        string ResultdirectoryPath = @"D:\\201512_CMProcess\\HMMResult\\Version3";
-        string directoryPath = @"D:\\201512_CMProcess\\HMMResult\\Version3\\Log";//定义一个路径变量
+        string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1";
+        string directoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1\\Log";//定义一个路径变量
         HMMClass hmm;
 
         public TestHMM(int n,Double[,] A, Dictionary<int, double[]> B, Double[,] PI)
@@ -71,7 +71,7 @@ namespace   HMMProcess
 
             for (int t = 0; t < Q.Count(); t++)
             {
-                sw.WriteLine(Obeservation[t].userid+"\t"+((Activity)Q[t]).ToString() + "\t" + Obeservation[t].intimeindex + "\t" + Obeservation[t].outtimeindex + "\t" + Obeservation[t].NumST + "\t" + Obeservation[t].stationid);
+                sw.WriteLine(Obeservation[t].userid+"\t"+((Activity)Q[t]).ToString() + "\t" + Obeservation[t].intimeindex + "\t" + Obeservation[t].outtimeindex + "\t" + Obeservation[t].NumST + "\t" + Obeservation[t].cellid);
                // Console.WriteLine(((Activity)Q[t]).ToString());
             }
            // Console.WriteLine();

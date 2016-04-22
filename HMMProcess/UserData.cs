@@ -10,7 +10,7 @@ namespace HMMProcess
     {
             public DateTime timeindex;
             public int userid;
-            public int stationid ;
+            public int cellid ;
             
 
             public UserData()
@@ -23,7 +23,7 @@ namespace HMMProcess
                 // TODO: Complete member initialization
                 timeindex = p1;
                 userid = p2;
-                stationid = p3;
+                cellid = p3;
             }
     }
 
@@ -32,7 +32,7 @@ namespace HMMProcess
         public DateTime intimeindex;
         public DateTime outtimeindex;
         public int userid;
-        public int stationid;
+        public int cellid;
         public int NumST;
 
 
@@ -47,7 +47,7 @@ namespace HMMProcess
             intimeindex = p0;
             outtimeindex = p1;
             userid = p2;
-            stationid = p3;
+            cellid = p3;
             NumST = p5;
         }
     }

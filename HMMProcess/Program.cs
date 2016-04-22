@@ -11,10 +11,10 @@ namespace HMMProcess
     {
         static void Main(string[] args)
         {
-            string ResultdirectoryPath = @"D:\\201512_CMProcess\\HMMResult\\Version4";
+            string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1";
 
-            string directoryPath_HWInfo = @"D:/201512_CMProcess/CMDProcessResult/version2/HWInfoResult_0.5/";//定义一个路径变量
-            string directoryPath_STInfo = @"D:/201512_CMProcess/CMDProcessResult/version2/STDataResult_400_1Hour/";//定义一个路径变量
+            string directoryPath_HWInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/HWInfoResult/";//定义一个路径变量
+            string directoryPath_STInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/STDataResult_400_1Hour/";//定义一个路径变量
 
             if (!Directory.Exists(ResultdirectoryPath))//如果路径不存在
             {
@@ -28,14 +28,13 @@ namespace HMMProcess
             //输入轨迹存储
             Dictionary<int, List<CellTra>> tempdata = new Dictionary<int, List<CellTra>>();
 
-            //基站号：2-5953，只有5183个基站不为0
             Dictionary <int,double[]> B;
             Double[,] A;
             Double[,] PI;
             Dictionary<int, string[]> StationInfo;
 
             //原始数据读取
-            DataInput input = new DataInput(9, 5934);
+            DataInput input = new DataInput(9, 3956);
             //1、生成矩阵读取
             B = input.ConfusionMatInput();
             //2、转换矩阵读取
@@ -43,10 +42,10 @@ namespace HMMProcess
             //3、初始矩阵读取
             PI = input.InitMatInput();
             //4、基站坐标读取
-            StationInfo = input.StationIdInfoInput();
+            StationInfo = input.GridCellIdInfoInput();
 
             //分163个文件读
-            DirectoryInfo dir = new System.IO.DirectoryInfo("D:\\201512_CMProcess\\CMDProcessResult\\version2\\STDataResult_400_1Hour");
+            DirectoryInfo dir = new System.IO.DirectoryInfo("D:\\201604_CMProcess\\CMDProcessResult\\version1\\STDataResult_400_1Hour");
             
            // int n = 0;
             for(int n=0;n< dir.GetFiles().Count();n++)
@@ -68,17 +67,17 @@ namespace HMMProcess
                         DateTime indt = DateTime.ParseExact(strArr[4], "yyyy/M/dd H:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                         DateTime outdt = DateTime.ParseExact(strArr[5], "yyyy/M/dd H:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
                         int userid = Convert.ToInt32(strArr[0]);
-                        int stationid = Convert.ToInt32(strArr[1]);
+                        int cellid = Convert.ToInt32(strArr[1]);
                         int NumST = Convert.ToInt32(strArr[6]);
                         //添加到hash表中，key为用户id
                         if (tempdata.ContainsKey(userid))
                         {
-                            tempdata[userid].Add(new CellTra(indt, outdt, userid, stationid, NumST));
+                            tempdata[userid].Add(new CellTra(indt, outdt, userid, cellid, NumST));
                         }
                         else
                         {
                             tempdata.Add(userid, new List<CellTra>());
-                            tempdata[userid].Add(new CellTra(indt, outdt, userid, stationid, NumST));
+                            tempdata[userid].Add(new CellTra(indt, outdt, userid, cellid, NumST));
                         }
                         m++;
                     }
@@ -117,7 +116,7 @@ namespace HMMProcess
                     {
                         int isNotower = 1;
                         //判断是否有不在混淆矩阵的点。因为混淆矩阵只有5183维，有一些地方不会产生活动。
-                        var q = from w in tt.Value select w.stationid;
+                        var q = from w in tt.Value select w.cellid;
                         foreach (var k in q)
                             if (!B.ContainsKey(k))
                                 isNotower = 0;
