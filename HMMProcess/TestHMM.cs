@@ -12,9 +12,9 @@ namespace   HMMProcess
         StreamWriter swlog;
         StreamWriter sw;
 
-        enum Activity { Shopping, Eating, Transportation, work, Social, home, study, Recreation,Entertainment };  // 隐藏状态（活动）,9类
-        string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1";
-        string directoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1\\Log";//定义一个路径变量
+        enum Activity { Shopping,Eating,Transportation, work, Social, home, study, Recreation,Entertainment };  // 隐藏状态（活动）,9类
+        string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\VersionTest5";
+        string directoryPath = @"D:\\201604_CMProcess\\HMMResult\\VersionTest5\\Log";//定义一个路径变量
         HMMClass hmm;
 
         public TestHMM(int n,Double[,] A, Dictionary<int, double[]> B, Double[,] PI)

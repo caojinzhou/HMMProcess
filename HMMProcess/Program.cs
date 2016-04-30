@@ -11,7 +11,7 @@ namespace HMMProcess
     {
         static void Main(string[] args)
         {
-            string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\Version1";
+            string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\VersionTest5\\log";
 
             string directoryPath_HWInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/HWInfoResult/";//定义一个路径变量
             string directoryPath_STInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/STDataResult_400_1Hour/";//定义一个路径变量
