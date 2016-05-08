@@ -52,7 +52,7 @@ namespace HMMProcess
             try
             {
 
-                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\POIConfusionResult\\test.txt"))
+                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\POIConfusionResult\\2016_ConfusionMAT_9_9724_GTEsti.txt"))
                 {
                     //输入文本为3956行，10列。第一列为cellid
                     String line;
@@ -65,7 +65,7 @@ namespace HMMProcess
                         for (j = 1; j < strArr.Count()-1; j++)
                         {
                             //B[j, i] = Convert.ToDouble(strArr[j]) * 100;
-                            B[stationid][j - 1] = Convert.ToDouble(strArr[j])*100;
+                            B[stationid][j - 1] = Convert.ToDouble(strArr[j])*10;
                             //Console.WriteLine(matrix[i, j]);
                         }
                         i++;
@@ -90,7 +90,7 @@ namespace HMMProcess
             try
             {
 
-                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\CheckinTransitionResult\\2016_transitionMATPro_4_9_test2.txt"))
+                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\CheckinTransitionResult\\2016_transitionMATPro_4_9_Nomi.txt"))
                 {
 
                     String line;
@@ -101,7 +101,7 @@ namespace HMMProcess
                         string[] strArr = line.Split('\t');
                         for (j = 0; j < strArr.Count(); j++)
                         {
-                            A[i, j] = Convert.ToDouble(strArr[j])/100 ;
+                            A[i, j] = Convert.ToDouble(strArr[j])/100;
                             Sum += A[i, j];
                             //Console.WriteLine(matrix[i, j]);
                         }
@@ -142,7 +142,7 @@ namespace HMMProcess
                     while ((line = sr.ReadLine()) != null)
                     {//9行，4列
                         string[] strArr = line.Split('\t');
-                        for (j = 0; j < strArr.Count() - 1; j++)
+                        for (j = 0; j < strArr.Count(); j++)
                         {
                             PI[i, j] = Convert.ToDouble(strArr[j]);
 

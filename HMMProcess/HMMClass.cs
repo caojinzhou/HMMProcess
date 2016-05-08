@@ -92,7 +92,9 @@ namespace HMMProcess
             bool isPreHPoint = false;
             bool isPreWPoint = false;
             //初始概率矩阵为四段时间制
-            int InitHourIndex = (OB[0].intimeindex.Hour+OB[0].outtimeindex.Hour) > 24 ? (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour-24)/12 :(int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) / 12;
+            //int InitHourIndex = (OB[0].intimeindex.Hour+OB[0].outtimeindex.Hour) > 24 ? (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour-24)/12 :(int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) / 12;
+            int InitHourIndex=OB[0].intimeindex.Hour == 23? (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour - 24) / 12: (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) / 12;
+
             // 1. 初始化  
             for (Int32 j = 0; j < N; j++)
             {
@@ -102,13 +104,11 @@ namespace HMMProcess
             //初始为家
             if (HWinfo[0] == OB[0].cellid)
             {
-                DELTA[0, 5] = PI[5, InitHourIndex]* B[OB[0].cellid][5];
                 isPreHPoint = true;
             }
             //初始为工作
             if (HWinfo[1] == OB[0].cellid)
             {
-                DELTA[0, 3] = PI[3, InitHourIndex]* B[OB[0].cellid][3];
                 isPreWPoint = true;
             }
 
@@ -116,8 +116,9 @@ namespace HMMProcess
             for (Int32 t = 1; t < OB.Length; t++)
             {
                 //获取时间索引（这里可采用4段制和24段制）,采用4段制。0-6，6-12，12-18，18-24
-                int CHourIndex = (OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) > 24 ? (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour - 24) / 12 : (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) / 12;
-                int PHourIndex = (OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour) > 24 ? (int)(OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour - 24) / 12 : (int)(OB[t-1].intimeindex.Hour + OB[t-1].outtimeindex.Hour) / 12;
+                int CHourIndex = OB[t].intimeindex.Hour == 23 ? (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour - 24) / 12 : (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) / 12;
+                int PHourIndex= OB[t - 1].intimeindex.Hour == 23? (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour - 24) / 12: (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour) / 12;
+
 
                 //当前时刻每一个隐含状态j都遍历一边
                 for (Int32 j = 0; j < N; j++)
@@ -188,15 +189,10 @@ namespace HMMProcess
                if (HWinfo[1] == OB[t].cellid)
                {
                    isPreWPoint = true;
-                   //Double MaxValue = DELTA[t - 1, ] * A[PHourIndex, CHourIndex + 3 * 3];
-                   //DELTA[t, 3] = DELTA[t, 3] / B[OB[t].stationid][3];
-
                }
-               else if (HWinfo[0] == OB[t].cellid)
+               if (HWinfo[0] == OB[t].cellid)
                {
                     isPreHPoint = true;
-                    //Double MaxValue = DELTA[t - 1, PSI[t-1,5]] * A[PHourIndex, CHourIndex + 5 * 3];
-                    //DELTA[t, 5] = DELTA[t, 5] / B[OB[t].stationid][5];
                }
             }
 
@@ -220,7 +216,7 @@ namespace HMMProcess
             }
             else if (isPreHPoint == true && isPreWPoint == true)
             {
-                int PHourIndex = (OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour) > 24 ? (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour - 24) / 12 : (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour) / 12;
+                int PHourIndex= OB[0].intimeindex.Hour == 23? (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour - 24) / 12: (int)(OB[OB.Count() - 1].intimeindex.Hour + OB[OB.Count() - 1].outtimeindex.Hour) / 12;
                 if (PHourIndex == 0 || PHourIndex == 3)
                 {
                     Probability = DELTA[OB.Length - 1, 5];
@@ -263,7 +259,8 @@ namespace HMMProcess
 
 
             //24小时制的时间，转化成4个时间段。除以6
-            int InitHourIndex = (OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) > 24 ? (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour - 24) / 12 : (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) / 12;
+            int InitHourIndex = OB[0].intimeindex.Hour == 23 ? (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour - 24) / 12 : (int)(OB[0].intimeindex.Hour + OB[0].outtimeindex.Hour) / 12;
+            
             // 1. 初始化  
             for (Int32 j = 0; j < N; j++)
             {
@@ -273,8 +270,8 @@ namespace HMMProcess
             // 2. 递归  
             for (Int32 t = 1; t < OB.Length; t++)
             {
-                int CHourIndex = (OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) > 24 ? (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour - 24) / 12 : (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) / 12;
-                int PHourIndex = (OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour) > 24 ? (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour - 24) / 12 : (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour) / 12;
+                int CHourIndex = OB[t].intimeindex.Hour == 23 ? (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour - 24) / 12 : (int)(OB[t].intimeindex.Hour + OB[t].outtimeindex.Hour) / 12;
+                int PHourIndex = OB[t - 1].intimeindex.Hour == 23 ? (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour - 24) / 12 : (int)(OB[t - 1].intimeindex.Hour + OB[t - 1].outtimeindex.Hour) / 12;
 
                 //当前时刻每一个隐含状态都遍历一边
                 for (Int32 j = 0; j < N; j++)
