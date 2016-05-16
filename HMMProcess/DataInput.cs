@@ -90,7 +90,7 @@ namespace HMMProcess
             try
             {
 
-                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\CheckinTransitionResult\\2016_transitionMATPro_4_9_Nomi.txt"))
+                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\CheckinTransitionResult\\2016_transitionMATPro_4_9_test6.txt"))
                 {
 
                     String line;
