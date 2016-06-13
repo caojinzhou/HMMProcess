@@ -52,7 +52,7 @@ namespace HMMProcess
             try
             {
 
-                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\POIConfusionResult\\2016_ConfusionMAT_9_9724_GTEsti.txt"))
+                using (StreamReader sr = new StreamReader("D:\\201604_CMProcess\\POIConfusionResult\\2016_ConfusionMAT_9_2996_GTEsti.txt"))
                 {
                     //输入文本为3956行，10列。第一列为cellid
                     String line;
@@ -65,7 +65,7 @@ namespace HMMProcess
                         for (j = 1; j < strArr.Count()-1; j++)
                         {
                             //B[j, i] = Convert.ToDouble(strArr[j]) * 100;
-                            B[stationid][j - 1] = Convert.ToDouble(strArr[j])*10;
+                            B[stationid][j - 1] = Convert.ToDouble(strArr[j]);
                             //Console.WriteLine(matrix[i, j]);
                         }
                         i++;

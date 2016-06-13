@@ -11,7 +11,7 @@ namespace HMMProcess
     {
         static void Main(string[] args)
         {
-            string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\VersionTest9\\log";
+            string ResultdirectoryPath = @"D:\\201604_CMProcess\\HMMResult\\VersionTest6\\log";
 
             string directoryPath_HWInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/HWInfoResult/";//定义一个路径变量
             string directoryPath_STInfo = @"D:/201604_CMProcess/CMDProcessResult/version1/STDataResult_400_1Hour/";//定义一个路径变量
@@ -21,7 +21,7 @@ namespace HMMProcess
                 Directory.CreateDirectory(ResultdirectoryPath);//创建一个路径的文件夹
             }
 
-            StreamWriter swlog = new StreamWriter(Path.Combine(ResultdirectoryPath, "log.txt"), true);
+            StreamWriter swlog = new StreamWriter(Path.Combine(ResultdirectoryPath, "log.txt"), false);
 
             Dictionary<int,List<int>> userhwinfo;
 
@@ -137,12 +137,15 @@ namespace HMMProcess
 
                     userhwinfo.Clear();
                     tempdata.Clear();
+                if (n == dir.GetFiles().Count() - 1)
+                    test.WriteFration();
                     test.Close();
                    // n++;//文件循环163
                     sr.Close();
                     sr.Dispose();
                 }
 
+            
             swlog.Flush();
             swlog.Close();
             //}

@@ -158,14 +158,21 @@ namespace HMMProcess
                             PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态 
                         }
                     }
-                    else
+                    else //isPreHPoint和isPreWPoint都为false
                     {
                         Double MaxValue = DELTA[t - 1, 0] * A[PHourIndex+0*4, CHourIndex + j * 4];
                         Int32 MaxValueIndex = 0;
                         //当前时刻的某一j状态与前一时刻每一个状态连接，求得最大连接值
                         for (Int32 i = 1; i < N; i++)
                         {
-                            //即使没有得到home或work点（前一时刻），仍有可能被探测出来。
+                            //有pre-home info，且前一位置不为家，则不能将MaxValueIndex设为5,但如果没有pre-home info，
+                            //则正常递归计算，若得到home location，则添加到HWinfo数组里，作为先验信息。
+                            if (HWinfo[0] != 0 && i == 5)
+                                continue;
+                            //有pre-work info，且前一位置不为工作，则不能将MaxValueIndex设为3,但如果没有pre-work info，
+                            //则正常递归计算，若得到work location，则添加到HWinfo数组里，作为先验信息。
+                            if (HWinfo[1] != 0 && i == 3)
+                                continue;
                             Double Value = DELTA[t - 1, i] * A[PHourIndex + i * 4, CHourIndex + j * 4];
                             if (Value > MaxValue)
                             {
@@ -174,6 +181,12 @@ namespace HMMProcess
                             }
 
                         }
+                        //将探测出来的及时home work info添加进先验知识里
+                        if (MaxValueIndex == 5)
+                            HWinfo[0] = OB[t - 1].cellid;
+                        if(MaxValueIndex==3)
+                            HWinfo[1]= OB[t - 1].cellid;
+
                         DELTA[t, j] = MaxValue * B[OB[t].cellid][j];
                         PSI[t, j] = MaxValueIndex; // 记录下最有可能到达此状态的上一个状态  
 
@@ -232,6 +245,15 @@ namespace HMMProcess
             {
                 for (Int32 i = 1; i < N; i++)
                 {
+                    //有pre-home info，且前一位置不为家，则不能将MaxValueIndex设为5,但如果没有pre-home info，
+                    //则正常递归计算，若得到home location，则添加到HWinfo数组里，作为先验信息。
+                    if (HWinfo[0] != 0 && i == 5)
+                        continue;
+                    //有pre-work info，且前一位置不为工作，则不能将MaxValueIndex设为3,但如果没有pre-work info，
+                    //则正常递归计算，若得到work location，则添加到HWinfo数组里，作为先验信息。
+                    if (HWinfo[1] != 0 && i == 3)
+                        continue;
+
                     if (DELTA[OB.Length - 1, i] > Probability)
                     {
                         Probability = DELTA[OB.Length - 1, i];
@@ -282,6 +304,7 @@ namespace HMMProcess
                     //当前时刻的某一j状态与前一时刻每一个i状态连接，求得最大连接值
                     for (Int32 i = 1; i < N; i++)
                     {
+
                         Double Value = DELTA[t - 1, i] * A[PHourIndex + i * 4, CHourIndex + j * 4];
                         if (Value > MaxValue)
                         {
